@@ -190,7 +190,7 @@ def main(bots: bool, bugs: bool):
 		haveBotDefeating = haveBotDefeating or itemType.BOT_DEFEATING in choices[item]
 		haveStructureDefeating = haveStructureDefeating or itemType.STRUCTURE_DEFEATING in choices[item]
 		haveSupport = haveSupport or itemType.SUPPORT in choices[item]
-		haveBackpack = haveBackpack or itemType.SUPPORT in choices[item]
+		haveBackpack = haveBackpack or itemType.BACKPACK in choices[item]
 
 		del choices[item]
 	
