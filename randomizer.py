@@ -118,7 +118,7 @@ stratagems: dict[str, set[itemType]] = {
 	"MD-I4 Incendiary Mines": set(), # Might be able to hurt armor but needs testing
 	"AX/LAS-5 \"Guard Dog\" Rover": {itemType.BACKPACK},
 	"SH-20 Ballistic Shield Backpack": {itemType.BACKPACK},
-	"ARC-3 Arc Thrower": {itemType.SUPPORT},
+	"ARC-3 Arc Thrower": {itemType.SUPPORT, itemType.STANDOFF},
 	"LAS-99 Quasar Cannon": {itemType.SUPPORT, itemType.BOT_DEFEATING, itemType.FAB_DEFEATING, itemType.NEST_DEFEATING, itemType.STANDOFF},
 	"SH-32 Shield Generator Pack": {itemType.BACKPACK},
 
