@@ -11,6 +11,7 @@ class itemType(Enum):
 	NEST_DEFEATING = auto() # Has to have enough to take out large nest (8?), be refillable from resupply, or infinite
 	VEHICLE = auto()
 	STANDOFF = auto()
+	CQC = auto()
 
 class inventorySlots(Enum):
 	PRIMARY = auto()
@@ -21,7 +22,7 @@ class inventorySlots(Enum):
 	STRAT3 = auto()
 	STRAT4 = auto()
 
-primaries = {
+primaries: dict[str, set[itemType]] = {
 	"AR-23 Liberator": set(),
 	"AR-23P Liberator Penetrator": {itemType.BOT_DEFEATING},
 	"AR-23C Liberator Concussive": set(),
@@ -49,7 +50,7 @@ primaries = {
 	"PLAS-101 Purifier": {itemType.BOT_DEFEATING, itemType.STANDOFF}
 }
 
-secondaries = {
+secondaries: dict[str, set[itemType]] = {
 	"P-2 Peacemaker": set(),
 	"P-19 Redeemer": set(),
 	"GP-31 Grenade Pistol": {itemType.BOT_DEFEATING, itemType.FAB_DEFEATING, itemType.NEST_DEFEATING, itemType.STANDOFF},
@@ -59,7 +60,7 @@ secondaries = {
 	"SG-22 Bushwhacker": set()
 }
 
-throwables = {
+throwables: dict[str, set[itemType]] = {
 	"G-6 Frag": {itemType.FAB_DEFEATING, itemType.NEST_DEFEATING},
 	"G-12 High Explosive": {itemType.FAB_DEFEATING, itemType.NEST_DEFEATING},
 	"G-10 Incendiary": {itemType.FAB_DEFEATING, itemType.NEST_DEFEATING},
@@ -71,7 +72,7 @@ throwables = {
 	"K-2 Throwing Knife": set()
 }
 
-stratagems = {
+stratagems: dict[str, set[itemType]] = {
 	"MG-43 Machine Gun": {itemType.SUPPORT, itemType.BOT_DEFEATING},
 	"APW-1 Anti-Materiel Rifle": {itemType.SUPPORT, itemType.BOT_DEFEATING},
 	"M-105 Stalwart": {itemType.SUPPORT},
@@ -139,6 +140,13 @@ def isEquipGun(slot: inventorySlots):
 	return slot in {inventorySlots.PRIMARY, inventorySlots.SECONDARY}
 
 def main(bots: bool, bugs: bool):
+	
+	requirements: set[itemType] = {itemType.CQC}
+	if bots:
+		requirements.update({itemType.BOT_DEFEATING, itemType.FAB_DEFEATING})
+	elif bugs:
+		requirements.update({itemType.NEST_DEFEATING})
+
 	myPrimary: str
 	mySecondary: str
 	myThrowable: str
@@ -146,13 +154,11 @@ def main(bots: bool, bugs: bool):
 
 	inventorySlotsList = [i for i in inventorySlots]
 	random.shuffle(inventorySlotsList)
+	firstSlot = random.choice((inventorySlots.PRIMARY, inventorySlots.SECONDARY, inventorySlots.THROWABLE, inventorySlots.STRAT1))
+	inventorySlotsList.insert(0, inventorySlotsList.pop(inventorySlotsList.index(firstSlot)))
 
-	haveBotDefeating: bool = False
-	haveFabDefeating: bool = False
-	haveNestDefeating: bool = False
 	haveSupport: bool = False
 	haveBackpack: bool = False
-	haveNonStandoff: bool = False
 
 	for i in range(len(inventorySlotsList)):
 		slot = inventorySlotsList[i]
@@ -178,18 +184,18 @@ def main(bots: bool, bugs: bool):
 			if haveBackpack and itemType.BACKPACK in itemFlags:
 				continue
 			
-			if i == len(inventorySlotsList)-1 or (i == len(inventorySlotsList)-2 and inventorySlotsList[len(inventorySlots)-1] == inventorySlots.THROWABLE): # Last inventory slot, we need to wrap it up
-				if bots and not haveBotDefeating and not itemType.BOT_DEFEATING in itemFlags:
+			if len(requirements) > 0 and not (isStratagem(slot) and haveSupport):
+				goodItem: bool = False
+				for flag in itemFlags:
+					if flag in requirements:
+						goodItem = True
+						requirements.remove(flag)
+				if not goodItem and (isEquipGun(slot) or itemType.SUPPORT in itemFlags) and itemType.STANDOFF not in itemFlags and itemType.CQC in requirements:
+					goodItem = True
+					requirements.remove(itemType.CQC) 
+				if not goodItem:
 					continue
 
-			if inventorySlots.PRIMARY not in inventorySlotsList[i+1:] and inventorySlots.SECONDARY not in inventorySlotsList[i+1:] and (isEquipGun(slot) or itemType.SUPPORT in itemFlags):
-				if not haveNonStandoff and itemType.STANDOFF in itemFlags:
-					continue
-				if bots and not haveFabDefeating and not itemType.FAB_DEFEATING in itemFlags:
-					continue
-				if bugs and not haveNestDefeating and not itemType.NEST_DEFEATING in itemFlags:
-					continue
-		
 			break
 		
 		if slot == inventorySlots.PRIMARY:
@@ -201,12 +207,8 @@ def main(bots: bool, bugs: bool):
 		else:
 			myStrats.add(item)
 
-		haveBotDefeating = haveBotDefeating or itemType.BOT_DEFEATING in itemFlags
-		haveFabDefeating = haveFabDefeating or itemType.FAB_DEFEATING in itemFlags
-		haveNestDefeating = haveNestDefeating or itemType.NEST_DEFEATING in itemFlags
 		haveSupport = haveSupport or itemType.SUPPORT in itemFlags
 		haveBackpack = haveBackpack or itemType.BACKPACK in itemFlags
-		haveNonStandoff = haveNonStandoff or (isStratagem(slot) and itemType.STANDOFF not in itemFlags and itemType.SUPPORT in itemFlags) or (isEquipGun(slot) and itemType.STANDOFF not in itemFlags)
 	
 	print(f"Primary: {myPrimary}")
 	print(f"Secondary: {mySecondary}")
