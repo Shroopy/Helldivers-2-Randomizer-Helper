@@ -9,6 +9,7 @@ class itemType(Enum):
 	BOT_DEFEATING = auto() # Direct fire medium 1 AP or higher to take out gunships, as well as tanks
 	STRUCTURE_DEFEATING = auto()
 	VEHICLE = auto()
+	STANDOFF = auto()
 
 class inventorySlots(Enum):
 	PRIMARY = auto()
@@ -36,22 +37,22 @@ primaries = {
 	"SG-225 Breaker": set(),
 	"SG-225SP Breaker Spray & Pray": set(),
 	"SG-225IE Breaker Incendiary": set(),
-	"CB-9 Exploding Crossbow": {itemType.BOT_DEFEATING},
+	"CB-9 Exploding Crossbow": {itemType.BOT_DEFEATING, itemType.STANDOFF},
 	"JAR-5 Dominator": {itemType.BOT_DEFEATING},
-	"R-36 Eruptor": {itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING},
-	"SG-8P Punisher Plasma": {itemType.BOT_DEFEATING},
+	"R-36 Eruptor": {itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING, itemType.STANDOFF},
+	"SG-8P Punisher Plasma": {itemType.BOT_DEFEATING, itemType.STANDOFF},
 	"ARC-12 Blitzer": {itemType.BOT_DEFEATING},
 	"LAS-5 Scythe": set(),
 	"LAS-16 Sickle": set(),
-	"PLAS-1 Scorcher": {itemType.BOT_DEFEATING},
-	"PLAS-101 Purifier": {itemType.BOT_DEFEATING}
+	"PLAS-1 Scorcher": {itemType.BOT_DEFEATING, itemType.STANDOFF},
+	"PLAS-101 Purifier": {itemType.BOT_DEFEATING, itemType.STANDOFF}
 }
 
 secondaries = {
 	"P-2 Peacemaker": set(),
 	"P-19 Redeemer": set(),
-	"GP-31 Grenade Pistol": {itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING},
-	"LAS-7 Dagger": set(),
+	"GP-31 Grenade Pistol": {itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING, itemType.STANDOFF},
+	"LAS-7 Dagger": {itemType.STANDOFF},
 	"P-113 Verdict": set(),
 	"P-4 Senator": set(),
 	"SG-22 Bushwhacker": set()
@@ -73,15 +74,15 @@ stratagems = {
 	"MG-43 Machine Gun": {itemType.SUPPORT, itemType.BOT_DEFEATING},
 	"APW-1 Anti-Materiel Rifle": {itemType.SUPPORT, itemType.BOT_DEFEATING},
 	"M-105 Stalwart": {itemType.SUPPORT},
-	"EAT-17 Expendable Anti-Tank": {itemType.SUPPORT, itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING},
-	"GR-8 Recoilless Rifle": {itemType.SUPPORT, itemType.BACKPACK, itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING},
+	"EAT-17 Expendable Anti-Tank": {itemType.SUPPORT, itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING, itemType.STANDOFF},
+	"GR-8 Recoilless Rifle": {itemType.SUPPORT, itemType.BACKPACK, itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING, itemType.STANDOFF},
 	"FLAM-40 Flamethrower": {itemType.SUPPORT},
-	"AC-8 Autocannon": {itemType.SUPPORT, itemType.BACKPACK, itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING},
+	"AC-8 Autocannon": {itemType.SUPPORT, itemType.BACKPACK, itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING, itemType.STANDOFF},
 	"MG-206 Heavy Machine Gun": {itemType.SUPPORT, itemType.BOT_DEFEATING},
-	"RL-77 Airburst Rocket Launcher": {itemType.SUPPORT, itemType.BACKPACK, itemType.BOT_DEFEATING},
-	"MLS-4x Commando": {itemType.SUPPORT, itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING},
+	"RL-77 Airburst Rocket Launcher": {itemType.SUPPORT, itemType.BACKPACK, itemType.BOT_DEFEATING, itemType.STANDOFF},
+	"MLS-4x Commando": {itemType.SUPPORT, itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING, itemType.STANDOFF},
 	"RS-422 Railgun": {itemType.SUPPORT, itemType.BOT_DEFEATING},
-	"FAF-14 Spear": {itemType.SUPPORT, itemType.BACKPACK, itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING},
+	"FAF-14 Spear": {itemType.SUPPORT, itemType.BACKPACK, itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING, itemType.STANDOFF},
 
 	"Orbital Gatling Barrage": set(),
 	"Orbital Airburst Strike": set(),
@@ -110,13 +111,13 @@ stratagems = {
 
 	"MD-6 Anti-Personnel Minefield": set(),
 	"B-1 Supply Pack": {itemType.BACKPACK},
-	"GL-21 Grenade Launcher": {itemType.SUPPORT, itemType.STRUCTURE_DEFEATING},
+	"GL-21 Grenade Launcher": {itemType.SUPPORT, itemType.STRUCTURE_DEFEATING, itemType.STANDOFF},
 	"LAS-98 Laser Cannon": {itemType.SUPPORT, itemType.BOT_DEFEATING},
 	"MD-I4 Incendiary Mines": set(), # Might be able to hurt armor but needs testing
 	"AX/LAS-5 \"Guard Dog\" Rover": {itemType.BACKPACK},
 	"SH-20 Ballistic Shield Backpack": {itemType.BACKPACK},
 	"ARC-3 Arc Thrower": {itemType.SUPPORT},
-	"LAS-99 Quasar Cannon": {itemType.SUPPORT, itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING},
+	"LAS-99 Quasar Cannon": {itemType.SUPPORT, itemType.BOT_DEFEATING, itemType.STRUCTURE_DEFEATING, itemType.STANDOFF},
 	"SH-32 Shield Generator Pack": {itemType.BACKPACK},
 
 	"A/MG-43 Machine Gun Sentry": set(), # Technically can destroy heavies but you'd need to hit their weakpoint and this is static
@@ -129,6 +130,12 @@ stratagems = {
 	"EXO-45 Patriot Exosuit": {itemType.VEHICLE}, # Does everything but only two uses
 	"EXO-49 Emancipator Exosuit": {itemType.VEHICLE} # Does everything but only two uses
 }
+
+def isStratagem(slot: inventorySlots):
+	return slot in {inventorySlots.STRAT1, inventorySlots.STRAT2, inventorySlots.STRAT3, inventorySlots.STRAT4}
+
+def isEquipGun(slot: inventorySlots):
+	return slot in {inventorySlots.PRIMARY, inventorySlots.SECONDARY}
 
 def main(bots: bool, bugs: bool):
 	myPrimary: str
@@ -143,40 +150,44 @@ def main(bots: bool, bugs: bool):
 	haveStructureDefeating: bool = False
 	haveSupport: bool = False
 	haveBackpack: bool = False
+	haveNonStandoff: bool = False
 
 	for i in range(len(inventorySlotsList)):
 		slot = inventorySlotsList[i]
 		choices: dict[str, set[itemType]]
 		if slot == inventorySlots.PRIMARY:
-			choices = primaries
+			choices = primaries.copy()
 		elif slot == inventorySlots.SECONDARY:
-			choices = secondaries
+			choices = secondaries.copy()
 		elif slot == inventorySlots.THROWABLE:
-			choices = throwables
+			choices = throwables.copy()
 		else:
-			choices = stratagems
+			choices = stratagems.copy()
+		random.shuffle(list(choices.keys()))
 
-		itemFound = False
-		item: str
-		while not itemFound:
-			item = random.choice(list(choices.keys()))
-			
-			if i == len(inventorySlotsList)-1 or (bots and i == len(inventorySlotsList)-2 and inventorySlotsList[len(inventorySlots)-1] == inventorySlots.THROWABLE): # Last inventory slot, we need to wrap it up
-				if bots and not haveBotDefeating and not itemType.BOT_DEFEATING in choices[item]:
-					del choices[item]
-					continue
-				if not haveStructureDefeating and not itemType.STRUCTURE_DEFEATING in choices[item]:
-					del choices[item]
-					continue
-			
-			if haveSupport and itemType.SUPPORT in choices[item]:
-				del choices[item] 
-				continue
-			if haveBackpack and itemType.BACKPACK in choices[item]:
-				del choices[item]
-				continue
+		for item in choices:
+			itemFlags = choices[item]
 
-			itemFound = True
+			if isStratagem(slot) and item in myStrats:
+				continue
+			
+			if i == len(inventorySlotsList)-1 or (i == len(inventorySlotsList)-2 and inventorySlotsList[len(inventorySlots)-1] == inventorySlots.THROWABLE): # Last inventory slot, we need to wrap it up
+				if bots and not haveBotDefeating and not itemType.BOT_DEFEATING in itemFlags:
+					continue
+
+			if i == len(inventorySlotsList)-1:
+				if not haveStructureDefeating and not itemType.STRUCTURE_DEFEATING in itemFlags:
+					continue
+				if not haveNonStandoff and itemType.STANDOFF in itemFlags:
+					continue
+
+			if not haveNonStandoff and {inventorySlots.PRIMARY, inventorySlots.SECONDARY} not in inventorySlotsList[i+1:] and (not itemType.SUPPORT in itemFlags or itemType.STANDOFF in itemFlags):
+				continue
+			
+			if haveSupport and itemType.SUPPORT in itemFlags:
+				continue
+			if haveBackpack and itemType.BACKPACK in itemFlags:
+				continue
 		
 		if slot == inventorySlots.PRIMARY:
 			myPrimary = item
@@ -187,12 +198,11 @@ def main(bots: bool, bugs: bool):
 		else:
 			myStrats.add(item)
 
-		haveBotDefeating = haveBotDefeating or itemType.BOT_DEFEATING in choices[item]
-		haveStructureDefeating = haveStructureDefeating or itemType.STRUCTURE_DEFEATING in choices[item]
-		haveSupport = haveSupport or itemType.SUPPORT in choices[item]
-		haveBackpack = haveBackpack or itemType.BACKPACK in choices[item]
-
-		del choices[item]
+		haveBotDefeating = haveBotDefeating or itemType.BOT_DEFEATING in itemFlags
+		haveStructureDefeating = haveStructureDefeating or itemType.STRUCTURE_DEFEATING in itemFlags
+		haveSupport = haveSupport or itemType.SUPPORT in itemFlags
+		haveBackpack = haveBackpack or itemType.BACKPACK in itemFlags
+		haveNonStandoff = haveNonStandoff or (isStratagem(slot) and itemType.STANDOFF not in itemFlags and itemType.SUPPORT in itemFlags) or (isEquipGun(slot) and itemType.STANDOFF not in itemFlags)
 	
 	print(f"Primary: {myPrimary}")
 	print(f"Secondary: {mySecondary}")
