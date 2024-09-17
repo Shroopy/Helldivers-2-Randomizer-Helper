@@ -6,7 +6,7 @@ import argparse
 class itemType(Enum):
 	SUPPORT = auto()
 	BACKPACK = auto()
-	BOT_DEFEATING = auto() # Direct fire medium 1 AP or higher to take out gunships, as well as tanks
+	BOT_DEFEATING = auto() # Direct fire medium 1 (level 3) AP or higher to take out gunships, as well as tanks
 	FAB_DEFEATING = auto() # Has to have enough to take out large base (4?)
 	NEST_DEFEATING = auto() # Has to have enough to take out large nest (8?), be refillable from resupply, or infinite
 	VEHICLE = auto()
@@ -43,7 +43,7 @@ primaries: dict[str, set[itemType]] = {
 	"JAR-5 Dominator": {itemType.BOT_DEFEATING},
 	"R-36 Eruptor": {itemType.BOT_DEFEATING, itemType.FAB_DEFEATING, itemType.NEST_DEFEATING, itemType.STANDOFF},
 	"SG-8P Punisher Plasma": {itemType.BOT_DEFEATING, itemType.STANDOFF},
-	"ARC-12 Blitzer": {itemType.BOT_DEFEATING},
+	"ARC-12 Blitzer": set(),
 	"LAS-5 Scythe": set(),
 	"LAS-16 Sickle": set(),
 	"PLAS-1 Scorcher": {itemType.BOT_DEFEATING, itemType.STANDOFF},
@@ -92,15 +92,16 @@ stratagems: dict[str, set[itemType]] = {
 	"Orbital 380mm HE Barrage": set(),
 	"Orbital Walking Barrage": set(),
 	"Orbital Laser": set(), # Does everything but only two uses
-	"Orbital Railcannon Strike": {itemType.BOT_DEFEATING},
+	"Orbital Napalm Barrage": set(),
+	"Orbital Railcannon Strike": set(),
 
-	"Eagle Strafing Run": set(), # Might be able to hurt armor but needs testing
+	"Eagle Strafing Run": set(),
 	"Eagle Airstrike": set(),
-	"Eagle Cluster Bomb": set(), # Might be able to hurt armor but needs testing
-	"Eagle Napalm Airstrike": set(), # Might be able to hurt armor but needs testing
+	"Eagle Cluster Bomb": set(),
+	"Eagle Napalm Airstrike": set(),
 	"LIFT-850 Jump Pack": {itemType.BACKPACK},
 	"Eagle Smoke Strike": set(),
-	"Eagle 110mm Rocket Pods": {itemType.BOT_DEFEATING},
+	"Eagle 110mm Rocket Pods": set(),
 	"Eagle 500kg Bomb": set(), # Too slow recharge to be reasonably used against structures
 
 	"Orbital Precision Strike": set(),
@@ -115,19 +116,20 @@ stratagems: dict[str, set[itemType]] = {
 	"B-1 Supply Pack": {itemType.BACKPACK},
 	"GL-21 Grenade Launcher": {itemType.SUPPORT, itemType.FAB_DEFEATING, itemType.NEST_DEFEATING, itemType.STANDOFF},
 	"LAS-98 Laser Cannon": {itemType.SUPPORT, itemType.BOT_DEFEATING},
-	"MD-I4 Incendiary Mines": set(), # Might be able to hurt armor but needs testing
+	"MD-I4 Incendiary Mines": set(),
 	"AX/LAS-5 \"Guard Dog\" Rover": {itemType.BACKPACK},
 	"SH-20 Ballistic Shield Backpack": {itemType.BACKPACK},
-	"ARC-3 Arc Thrower": {itemType.SUPPORT, itemType.STANDOFF},
-	"LAS-99 Quasar Cannon": {itemType.SUPPORT, itemType.BOT_DEFEATING, itemType.FAB_DEFEATING, itemType.NEST_DEFEATING, itemType.STANDOFF},
+	"ARC-3 Arc Thrower": {itemType.SUPPORT, itemType.STANDOFF, itemType.BOT_DEFEATING},
+	"MD-17 Anti-Tank Mines": set(),
+	"LAS-99 Quasar Cannon": {itemType.SUPPORT, itemType.BOT_DEFEATING, itemType.FAB_DEFEATING, itemType.STANDOFF},
 	"SH-32 Shield Generator Pack": {itemType.BACKPACK},
 
 	"A/MG-43 Machine Gun Sentry": set(), # Technically can destroy heavies but you'd need to hit their weakpoint and this is static
 	"A/G-16 Gatling Sentry": set(), # Technically can destroy heavies but you'd need to hit their weakpoint and this is static
 	"A/M-12 Mortar Sentry": set(), # Technically can destroy structures but inconsistent due to being automated
 	"AX/AR-23 \"Guard Dog\"": {itemType.BACKPACK},
-	"A/AC-8 Autocannon Sentry": {itemType.BOT_DEFEATING},
-	"A/MLS-4X Rocket Sentry": {itemType.BOT_DEFEATING},
+	"A/AC-8 Autocannon Sentry": set(),
+	"A/MLS-4X Rocket Sentry": set(),
 	"A/M-23 EMS Mortar Sentry": set(),
 	"EXO-45 Patriot Exosuit": {itemType.VEHICLE}, # Does everything but only two uses
 	"EXO-49 Emancipator Exosuit": {itemType.VEHICLE} # Does everything but only two uses
